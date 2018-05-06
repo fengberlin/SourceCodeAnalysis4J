@@ -4,6 +4,30 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import sun.misc.SharedSecrets;
 
+/**
+ * List接口的可调整大小数组的一种实现。 实现所有可选的列表操作，并允许所有元素为null。
+ * 除了实现List接口之外，该类还提供了一些方法来控制用于内部存储列表的数组大小。 （这个类大致相当于Vector，但是它是不同步的。）
+ *
+ * size，isEmpty，get，set，iterator和listIterator操作运行常量时间。
+ * add操作以分摊的恒定时间运行，即添加n个元素需要O(n)个时间。 所有其他操作都在线性时间内运行（粗略地说）。 与LinkedList实现相比，常数因子较低。
+ *
+ * 在使用ensureCapacity操作添加大量元素之前，应用程序可以增加ArrayList实例的容量。 这可能会减少增量重新分配的数量。
+ *
+ * 请注意，此实现不同步。如果多个线程同时访问ArrayList实例，并且至少有一个线程在结构上修改了列表，则它必须在外部同步。 这通常是通过在自然封装列表的某个对象上进行同步来完成的。
+ * 结构修改是添加或删除一个或多个元素或明确调整后备数组大小的任何操作;仅设置元素的值不是结构修改。
+ *
+ * 如果不存在这样的对象，列表应该使用Collections.synchronizedList方法“包装”。
+ * 这最好在创建时完成，以防止意外的非同步访问列表：List list = Collections.synchronizedList(new ArrayList(...));
+ *
+ * 这个类的iterator和listIterator方法返回的迭代器是快速失败的：
+ * 如果列表在迭代器创建后的任何时候在结构上被修改，除了通过迭代器自己的remove或add方法外，迭代器将抛出一个ConcurrentModificationException异常。
+ * 因此，面对并发修改，迭代器快速而干净地失败，而不是在将来某个未确定的时间冒着任意的，非确定性的行为风险。
+ * 但是，这是尽最大努力去快速失败的，所以并不能依靠这个机制来保证不会发生并发修改。
+ *
+ * 请注意，迭代器的故障快速行为无法得到保证，因为一般来说，在存在非同步并发修改的情况下不可能做出任何硬性保证。
+ * 失败快速迭代器尽最大努力抛出ConcurrentModificationException异常。
+ * 因此，编写一个依赖于此异常的程序是错误的：迭代器的快速失败行为应仅用于检测错误。
+ */
 public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, java.io.Serializable
 {
     // 序列化id，用来保证反序列化之后还是同一个对象。
@@ -900,13 +924,27 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         }
     }
 
+    // 在此列表中的元素上创建一个后期绑定和快速失败的Spliterator。
+    // Spliterator报告{@link Spliterator＃SIZED}，{@link Spliterator＃SUBSIZED}和{@link Spliterator＃ORDERED}。
+    // 重写实现应记录附加特征值的报告。
     @Override
     public Spliterator<E> spliterator() {
         return new ArrayListSpliterator<>(this, 0, -1, 0);
     }
 
+    // 以索引为基础分为两部分，懒散地初始化Spliterator。
     static final class ArrayListSpliterator<E> implements Spliterator<E> {
 
+		/**
+         * 如果ArrayLists是不可变的，或者在结构上不可变（不添加，删除等），我们可以用Arrays.spliterator实现它们的分割器。
+         * 相反，我们在遍历期间检测到尽可能多的干扰而不会牺牲很多性能。我们主要依靠modCounts。这些不能保证检测并发性违规行为，并且有时对线程内干扰过于保守，但在实践中发现足够的问题是值得的。
+         * 为了实现这一点，我们
+         * （1）懒惰地初始化fence和expectedModCount，直到我们需要提交给我们正在检查的状态的最新点;从而提高精度。 （这不适用于SubLists，它创建具有当前非惰性值的分割符）。
+         * （2）我们在forEach（对性能最敏感的方法）结束时只执行一次ConcurrentModificationException检查。当使用forEach（而不是迭代器）时，我们通常只能在行为之后检测干扰，而不是之前。
+         * 进一步的CME触发检查适用于所有其他可能的违反假设的情况，例如null或过小的elementData数组，因为它的size()方法只能由于干扰而发生。
+         * 这允许forEach的内循环在没有任何进一步检查的情况下运行，并且简化了lambda分辨率。
+         * 虽然这需要进行多次检查，但请注意，在list.stream().forEach(a)的常见情况下，除forEach本身之外，不会执行任何检查或其他计算。其他较少使用的方法无法利用这些优化的大部分优势。
+         */
         private final ArrayList<E> list;
         private int index; // current index, modified on advance/split
         private int fence; // -1 until used; then one past last index
