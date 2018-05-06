@@ -1,7 +1,14 @@
-# SourceCodeAnalysis4J
+# Source code analysis for Java or JDK
 
-记录一些重要的JDK/Java的源码分析
+记录一些重要的JDK/Java相关的源码分析。
 
 ## Java 集合框架
 
-[ArrayList.java](./Collections-framework/ArrayList.java)
+### ArrayList
+
+* [源码注释](./Collections-framework/ArrayList.java)
+* [文章分析](https://fengberlin.github.io/post/java-arraylist-analysis/)
+
+### LinkedList
+
+* [源码注释](./Collections-framework/LinkedList.java)
