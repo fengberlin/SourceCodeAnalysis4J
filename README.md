@@ -12,3 +12,4 @@
 ### LinkedList
 
 * [源码注释](./Collections-framework/LinkedList.java)
+* [文章分析](https://fengberlin.github.io/post/java-linkedlist-analysis/)
