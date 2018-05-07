@@ -475,29 +475,29 @@ public class LinkedList<E>
     // Queue operations.
     // 队列操作。
 
-    // 检索但不删除此链表的头（第一个元素）。即返回第一个元素但不删除它。如果这个链表为空，则返回null。
+    // 检索但不删除此队列的头（第一个元素）。即返回第一个元素但不删除它。如果这个队列为空，则返回null。
     public E peek() {
         final Node<E> f = first;
         return (f == null) ? null : f.item;
     }
 
-    // 检索但不删除此链表的头（第一个元素）。即返回第一个元素但不删除它。如果这个链表为空，相比peek方法，它则抛出NoSuchElementExceptionu异常。
+    // 检索但不删除此队列的头（第一个元素）。即返回第一个元素但不删除它。如果这个队列为空，相比peek方法，它则抛出NoSuchElementExceptionu异常。
     public E element() {
         return getFirst();
     }
 
-    // 检索并删除此链表的头（即第一个元素）。即返回第一个元素并且删除它。如果这个链表为空，则返回null。
+    // 检索并删除此队列的头（即第一个元素）。即返回第一个元素并且删除它。如果这个队列为空，则返回null。
     public E poll() {
         final Node<E> f = first;
         return (f == null) ? null : unlinkFirst(f);
     }
 
-    // 检索并删除此链表的头（第一个元素）。即返回第一个元素并删除它。如果这个链表为空，相比poll方法，它则抛出NoSuchElementExceptionu异常。
+    // 检索并删除此队列的头（第一个元素）。即返回第一个元素并删除它。如果这个队列为空，相比poll方法，它则抛出NoSuchElementExceptionu异常。
     public E remove() {
         return removeFirst();
     }
 
-    // 将指定的元素添加为此链表的尾部（即最后一个元素）并返回true。这个方法实现了Queue接口里的offer方法。
+    // 将指定的元素添加为此队列的尾部（即最后一个元素）并返回true。这个方法实现了Queue接口里的offer方法。
     public boolean offer(E e) {
         return add(e);
     }
@@ -506,51 +506,51 @@ public class LinkedList<E>
     // Deque operations
     // 双端队列操作
 
-    // 在此链表的前面插入指定的元素并返回true。这个方法实现了Deque接口里的offerFirst方法。
+    // 在此双端队列的前面插入指定的元素并返回true。这个方法实现了Deque接口里的offerFirst方法。
     public boolean offerFirst(E e) {
         addFirst(e);
         return true;
     }
 
-    // 在链表的末尾插入指定的元素。
+    // 在双端队列的末尾插入指定的元素。
     public boolean offerLast(E e) {
         addLast(e);
         return true;
     }
 
-    // 返回此链表的第一个元素但不删除，或者如果此链表为空，则返回null。
+    // 返回此双端队列的第一个元素但不删除，或者如果此双端队列为空，则返回null。
     public E peekFirst() {
         final Node<E> f = first;
         return (f == null) ? null : f.item;
     }
 
-    // 返回此链表的最后一个元素但不删除，或者如果此链表为空，则返回null。
+    // 返回此双端队列的最后一个元素但不删除，或者如果此双端队列为空，则返回null。
     public E peekLast() {
         final Node<E> l = last;
         return (l == null) ? null : l.item;
     }
 
-    // 返回并删除此链表的第一个元素，或者如果此链表为空，则返回null。
+    // 返回并删除此双端队列的第一个元素，或者如果此双端队列为空，则返回null。
     public E pollFirst() {
         final Node<E> f = first;
         return (f == null) ? null : unlinkFirst(f);
     }
 
-    // 返回并删除此链表的最后一个元素，或者如果此链表为空，则返回null。
+    // 返回并删除此双端队列的最后一个元素，或者如果此双端队列为空，则返回null。
     public E pollLast() {
         final Node<E> l = last;
         return (l == null) ? null : unlinkLast(l);
     }
 
-    // 将元素push到由此链表表示的堆栈。 换句话说，将该元素插入此链表的前面。
+    // 将元素push到由此链表表示的栈。 换句话说，将该元素插入此栈的前面。
     // 此方法与addFirst方法等价。
     public void push(E e) {
         addFirst(e);
     }
 
-    // 从该链表表示的堆栈中弹出一个元素。 换句话说，删除并返回此链表的第一个元素。
+    // 从该链表表示的栈中弹出一个元素。 换句话说，删除并返回此栈的第一个元素。
     // 此方法与removeFirst方法等价。
-    // 如果此链表为空，则抛出NoSuchElementException异常。
+    // 如果此栈为空，则抛出NoSuchElementException异常。
     public E pop() {
         return removeFirst();
     }
