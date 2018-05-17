@@ -13,3 +13,8 @@
 
 * [源码注释](./Collections-framework/LinkedList.java)
 * [文章分析](https://fengberlin.github.io/post/java-linkedlist-analysis/)
+
+### HashMap
+
+* [源码注释](./Collections-framework/HashMap.java)
+* [文章分析](https://fengberlin.github.io/post/java-hashmap-analysis/)
